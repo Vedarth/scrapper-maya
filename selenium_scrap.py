@@ -23,7 +23,6 @@ PASS= os.getenv('password')
 RECEIVER= os.getenv('reciever')
 PATH='/app/geckodriver'
 
-
 while True:
     try:
         driver = webdriver.Firefox(firefox_options=options, executable_path=PATH)
