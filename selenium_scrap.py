@@ -18,13 +18,11 @@ options = Options()
 options.add_argument("--headless")
 prev_name1, prev_name2, prev_date = "", "", ""
 
-try:
-    SENDER= os.getenv('email')
-    PASS= os.getenv('password')
-    RECEIVER= os.getenv('reciever')
-    PATH='/app/geckodriver'
-except:
-    pass
+SENDER= os.getenv('email')
+PASS= os.getenv('password')
+RECEIVER= os.getenv('reciever')
+PATH='/app/geckodriver'
+
 
 while True:
     try:
