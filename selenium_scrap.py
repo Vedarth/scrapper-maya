@@ -31,9 +31,9 @@ except:
 
 while True:
     try:
-        driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/local/bin/geckodriver')
+        driver = webdriver.Firefox(firefox_options=options, executable_path=PATH)
     except:
-        driver = webdriver.Firefox(firefox_options=options, executable_path='./geckodriver')
+        driver = webdriver.Firefox(firefox_options=options, executable_path=PATH)
     driver.get("https://maya.tase.co.il/")    
     lucky_button = driver.find_element_by_id("searchDesktop")
     lucky_button.send_keys('קנאביס')
