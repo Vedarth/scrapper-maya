@@ -23,6 +23,8 @@ try:
     PASS= os.getenv('password')
     RECEIVER= os.getenv('reciever')
     PATH='/app/geckodriver'
+except:
+    pass
 
 while True:
     try:
