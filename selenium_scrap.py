@@ -18,7 +18,7 @@ prev_name1, prev_name2, prev_date = "", "", ""
 SENDER= os.getenv('email')
 PASS= os.getenv('password')
 RECEIVER= os.getenv('reciever')
-PATH='/ app/phantomjs'
+PATH='/app/phantomjs'
 
 while True:
     driver = webdriver.PhantomJS(executable_path=PATH)
