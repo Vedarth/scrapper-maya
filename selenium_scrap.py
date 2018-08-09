@@ -22,7 +22,7 @@ try:
     SENDER= os.getenv('email')
     PASS= os.getenv('password')
     RECEIVER= os.getenv('reciever')
-    PATH='/usr/local/bin/geckodriver'
+    PATH='./geckodriver'
 except:
     SENDER = os.environ.get('email')
     PASS = os.environ.get('password')
