@@ -5,7 +5,6 @@ from selenium.webdriver.common.keys import Keys
 import os
 import smtplib
 from selenium.webdriver.firefox.options import Options
-import base64
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -18,8 +17,23 @@ server.login(os.getenv('email'), os.getenv('password'))
 options = Options()
 options.add_argument("--headless")
 prev_name1, prev_name2, prev_date = "", "", ""
+
+try:
+    SENDER= os.getenv('email')
+    PASS= os.getenv('password')
+    RECEIVER= os.getenv('reciever')
+    PATH='/usr/local/bin/geckodriver'
+except:
+    SENDER = os.environ.get('email')
+    PASS = os.environ.get('password')
+    RECEIVER = os.environ.get('reciever')
+    PATH = './geckodriver'
+
 while True:
-    driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/local/bin/geckodriver')
+    try:
+        driver = webdriver.Firefox(firefox_options=options, executable_path='/usr/local/bin/geckodriver')
+    except:
+        driver = webdriver.Firefox(firefox_options=options, executable_path='./geckodriver')
     driver.get("https://maya.tase.co.il/")    
     lucky_button = driver.find_element_by_id("searchDesktop")
     lucky_button.send_keys('קנאביס')
@@ -34,7 +48,7 @@ while True:
         if name1.text != "איילון":
             msg = "\n New data found "+name1.text
         
-            server.sendmail("16uec139@lnmiit.ac.in", "vedarth.sharma@gmail.com", msg.encode('utf-8'))
+            server.sendmail(SENDER, RECIEVER, msg.encode('utf-8'))
     
     prev_name1, prev_name2, prev_date = name1.text, name2.text, date.text
     driver.quit()        
