@@ -2,77 +2,121 @@ from time import sleep
 from random import randint
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 import os
-import smtplib
+import requests
+import shutil
 from dotenv import load_dotenv
 from pathlib import Path
 
+PATH='./geckodriver'
+paper = 25
+question = 1
 env_path = Path('.') / '.env'
 load_dotenv(dotenv_path=env_path)
-
-server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-server.ehlo()
-server.login(os.getenv('email'), os.getenv('password'))
-
-SENDER= os.getenv('email')
-PASS= os.getenv('password')
-RECEIVER= os.getenv('reciever')
-PATH='./phantomjs'
-prev_name1, prev_name2, prev_date, prev_name3, prev_name4, prev_date1 = "", "", "", "", "", ""
-
-while True:
-    driver = webdriver.PhantomJS(executable_path=PATH)
-    driver.get("https://maya.tase.co.il/")
-    driver.set_window_size(1920, 1080)
-    sleep(5)
-    lucky_button = driver.find_element_by_id("searchDesktop")    
-    lucky_button.send_keys('קנאביס')
-    lucky_button = driver.find_element_by_xpath('/html/body/div[2]/nav/div/div[2]/form/button')
-    lucky_button.send_keys(Keys.ENTER)
-    sleep(5)    
-    name1 = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[2]/div[1]/div[2]/a/h2")
-    date = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[3]/div")
-    name2 = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[2]/a")
-    print(name1.text, name2.text, date.text)
-
-    if prev_name1 != name1.text or prev_name2 != name2.text or prev_date != date.text:
-        if name1.text != "איילון":
-            msg = "\n New data found "+name1.text
-            message = 'Subject: {}\n\n{}'.format("Maya Update", msg)
-            server.sendmail(SENDER, RECEIVER, message.encode('utf-8'))
-            print("Email sent")
-    prev_name1, prev_name2, prev_date = name1.text, name2.text, date.text    
-    driver.quit()
-    driver = webdriver.PhantomJS(executable_path=PATH)
-    driver.get("https://maya.tase.co.il/")
-    driver.set_window_size(1920, 1080)
-    sleep(5)
-    lucky_button = driver.find_element_by_id("searchDesktop")
-    lucky_button.send_keys('מריחואנה')
-    lucky_button = driver.find_element_by_xpath('/html/body/div[2]/nav/div/div[2]/form/button')
-    lucky_button.send_keys(Keys.ENTER)
-    sleep(5)
-
-    name3, date1, name4 = name1, date, name2
+USERNAME = os.getenv('username')
+PASS = os.getenv('timepass')
+driver = webdriver.Firefox(executable_path=PATH)
+driver.get("https://www.time4education.com/")
+button = driver.find_element_by_xpath('/html/body/div[1]/div[1]/div[1]/div[1]/div[2]/div[2]/div[2]/a')
+button.send_keys(Keys.ENTER)
+sleep(5)
+login = driver.find_element_by_id('username')
+password = driver.find_element_by_id('password')
+login.send_keys(USERNAME)
+password.send_keys(PASS)
+button = driver.find_element_by_id('loginbtn')
+button.send_keys(Keys.ENTER)
+sleep(5)
+button = driver.get('https://www.time4education.com/my/aimcats.php')
+# button.send_keys(Keys.ENTER)
+sleep(5)
+result_analysis = driver.find_elements_by_id('resultanalysis')
+# result_analysis = [x for x in result_analysis if x.find_element_by_css_selector('a').get_attribute('href')]
+ans = list()
+for x in result_analysis:
     try:
-        name3 = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[2]/div[1]/div[2]/a/h2")
-        date1 = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[3]/div")
-        name4 = driver.find_element_by_xpath("/html/body/div[2]/div[8]/section/div/div/div/maya-report-actions/div[4]/maya-reports/div[1]/div[2]/a")
-    
-        print(name3.text, name4.text, date1.text, name3.get_attribute)
-
-        if prev_name3 != name3.text or prev_name4 != name4.text or prev_date1 != date1.text or prev_name1 != name3.text or prev_name2 != name4.text or prev_date != date1.text:
-            if name3.text != "איילון":
-                msg = "\n New data found "+name3.text
-                message = 'Subject: {}\n\n{}'.format("Maya Update", msg)
-                server.sendmail(SENDER, RECEIVER, message.encode('utf-8'))
-                print("Email sent")
-
-
-    
-        prev_name3, prev_name4, prev_date1 = name3.text, name4.text, date1.text
+        x.find_element_by_css_selector('a').get_attribute('href')
+        ans.append(x)
     except:
-        print("No results for מריחואנה")
-    
-    driver.quit()
-    sleep(55)
+        pass
+result_analysis = ans
+print(result_analysis[0].find_element_by_css_selector('a').get_attribute('href'))
+print(result_analysis.__dir__())
+print(len(result_analysis))
+for j in range(24, 25):
+    ans = []
+    res_ans = driver.find_elements_by_id('resultanalysis')
+    for x in res_ans:
+        try:
+            x.find_element_by_css_selector('a').get_attribute('href')
+            ans.append(x)
+        except:
+            pass
+    # driver.get(ans[j].find_element_by_css_selector('a').get_attribute('href'))
+    window_before = driver.window_handles[0]
+    ans[j].click()
+    window_after = driver.window_handles[1]
+    driver.switch_to_window(window_after)
+    sleep(10)
+    driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
+    solution_analysis = driver.find_element_by_link_text("Solutions & Analysis")
+    driver.get(solution_analysis.get_attribute('href'))
+    sleep(5)
+
+    question = 1
+
+    for i in range(1, 35):
+        ques = driver.find_element_by_link_text(str(i))
+        ques.send_keys(Keys.ENTER)
+        sleep(5)
+        image = driver.find_element_by_xpath('/html/body/div[4]/div/div/div[6]/div[6]/p/table/tbody/tr[1]/td/img')
+        file = open("questions/P"+str(paper)+"Q"+str(question)+".html", "w")
+        page = driver.page_source
+        file.write(page)
+        file.close()
+        r = requests.get(image.get_attribute('src'), stream=True)
+        if r.status_code == 200:
+            with open("answers/P"+str(paper)+"A"+str(question)+".gif", 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+        question += 1
+
+    select = Select(driver.find_element_by_id('aea1'))
+    select.select_by_value("DILR")
+
+    for i in range(1, 33):
+        ques = driver.find_element_by_link_text(str(i))
+        ques.send_keys(Keys.ENTER)
+        sleep(5)
+        image = driver.find_element_by_xpath('/html/body/div[4]/div/div/div[6]/div[6]/p/table/tbody/tr[1]/td/img')
+        file = open("questions/P"+str(paper)+"Q"+str(question)+".html", "w")
+        page = driver.page_source
+        file.write(page)
+        file.close()
+        r = requests.get(image.get_attribute('src'), stream=True)
+        if r.status_code == 200:
+            with open("answers/P"+str(paper)+"A"+str(question)+".gif", 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+        question += 1
+    select = Select(driver.find_element_by_id('aea1'))
+    select.select_by_value("QA")
+    for i in range(1, 35):
+        ques = driver.find_element_by_link_text(str(i))
+        ques.send_keys(Keys.ENTER)
+        sleep(5)
+        image = driver.find_element_by_xpath('/html/body/div[4]/div/div/div[6]/div[6]/p/table/tbody/tr[1]/td/img')
+        file = open("questions/P"+str(paper)+"Q"+str(question)+".html", "w")
+        page = driver.page_source
+        file.write(page)
+        file.close()
+        r = requests.get(image.get_attribute('src'), stream=True)
+        if r.status_code == 200:
+            with open("answers/P"+str(paper)+"A"+str(question)+".gif", 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+        question += 1
+    paper += 1
+    driver.get('https://www.time4education.com/my/aimcats.php')
+    sleep(5)
